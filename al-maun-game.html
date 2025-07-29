@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Who Wants to Be a Millionaire - Surah Al-Ma'un</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #2d2d5f 100%);
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        .game-container {
+            display: flex;
+            height: 100vh;
+            position: relative;
+        }
+        
+        .background-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .logo {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #ffd700, #ffed4e, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5)); }
+            to { filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.8)); }
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #b8b8d4;
+            text-align: center;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+        
+        .question-area {
+            width: 100%;
+            max-width: 900px;
+            margin-bottom: 40px;
+        }
+        
+        .question-box {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            animation: questionPulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes questionPulse {
+            0%, 100% { box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 0 0 rgba(255, 215, 0, 0.4); }
+            50% { box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 0 10px rgba(255, 215, 0, 0.1); }
+        }
+        
+        .question-number {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.1rem;
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .question-text {
+            font-size: 1.4rem;
+            line-height: 1.6;
+            font-weight: 500;
+            color: white;
+        }
+        
+        .answers-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            max-width: 900px;
+            width: 100%;
+        }
+        
+        .answer-btn {
+            background: linear-gradient(135deg, rgba(30, 30, 60, 0.8) 0%, rgba(50, 50, 90, 0.8) 100%);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .answer-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .answer-btn:hover {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 215, 0, 0.1) 100%);
+            border-color: #ffd700;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 215, 0, 0.2);
+        }
+        
+        .answer-btn:hover::before {
+            left: 100%;
+        }
+        
+        .answer-btn.correct {
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            border-color: #4ade80;
+            animation: correctAnswer 1s ease-in-out;
+        }
+        
+        .answer-btn.incorrect {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            border-color: #ef4444;
+            animation: incorrectAnswer 1s ease-in-out;
+        }
+        
+        @keyframes correctAnswer {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes incorrectAnswer {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .sidebar {
+            width: 350px;
+            background: linear-gradient(180deg, rgba(20, 20, 40, 0.9) 0%, rgba(30, 30, 60, 0.9) 100%);
+            backdrop-filter: blur(15px);
+            border-left: 2px solid rgba(255, 215, 0, 0.3);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .money-ladder {
+            flex: 1;
+            margin-bottom: 30px;
+        }
+        
+        .money-ladder h3 {
+            font-family: 'Orbitron', monospace;
+            color: #ffd700;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+        
+        .money-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 15px;
+            margin: 3px 0;
+            border-radius: 25px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        
+        .money-item.current {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #1a1a3e;
+            border-color: #ffd700;
+            animation: currentMoney 2s ease-in-out infinite;
+            font-weight: 700;
+        }
+        
+        @keyframes currentMoney {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+            50% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.8); }
+        }
+        
+        .money-item.safe {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.3) 0%, rgba(34, 197, 94, 0.1) 100%);
+            border-color: #22c55e;
+            color: #4ade80;
+        }
+        
+        .lifelines {
+            margin-bottom: 30px;
+        }
+        
+        .lifelines h3 {
+            font-family: 'Orbitron', monospace;
+            color: #ffd700;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .lifeline-btn {
+            width: 100%;
+            background: linear-gradient(135deg, rgba(100, 100, 200, 0.3) 0%, rgba(150, 150, 255, 0.3) 100%);
+            border: 2px solid rgba(150, 150, 255, 0.5);
+            border-radius: 10px;
+            padding: 12px;
+            color: white;
+            margin: 8px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .lifeline-btn:hover:not(.used) {
+            background: linear-gradient(135deg, rgba(150, 150, 255, 0.4) 0%, rgba(200, 200, 255, 0.4) 100%);
+            border-color: #a5a5ff;
+        }
+        
+        .lifeline-btn.used {
+            background: rgba(100, 100, 100, 0.3);
+            border-color: #666;
+            color: #999;
+            cursor: not-allowed;
+        }
+        
+        .start-screen {
+            text-align: center;
+            max-width: 600px;
+        }
+        
+        .start-btn {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #1a1a3e;
+            border: none;
+            padding: 20px 40px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Orbitron', monospace;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+        }
+        
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 215, 0, 0.5);
+        }
+        
+        .game-over {
+            text-align: center;
+            max-width: 600px;
+        }
+        
+        .final-amount {
+            font-family: 'Orbitron', monospace;
+            font-size: 3rem;
+            color: #ffd700;
+            margin: 20px 0;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .audio-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+        }
+        
+        .audio-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .audio-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .creator-info {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: linear-gradient(135deg, rgba(30, 30, 60, 0.95) 0%, rgba(20, 20, 40, 0.95) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            border-radius: 8px;
+            padding: 10px 15px;
+            color: #ffd700;
+            font-size: 12px;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            font-family: 'Roboto', sans-serif;
+            text-align: right;
+            line-height: 1.4;
+            max-width: 220px;
+        }
+        
+        .creator-info .creator-title {
+            color: #b8b8d4;
+            font-size: 9px;
+            margin-bottom: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .creator-info .creator-name {
+            color: #ffd700;
+            font-weight: 600;
+            margin-bottom: 1px;
+        }
+        
+        .creator-info .creator-position {
+            color: #a0a0c0;
+            font-size: 9px;
+        }
+    </style>
+</head>
+<body>
+    <div class="audio-controls">
+        <button class="audio-btn" onclick="toggleMusic()" id="musicBtn">🎵</button>
+        <button class="audio-btn" onclick="toggleSFX()" id="sfxBtn">🔊</button>
+    </div>
+    
+    <div class="creator-info">
+        <div class="creator-title">Creator</div>
+        <div class="creator-name">Kemas Sudirman</div>
+        <div class="creator-position">Guru PAIdBP SD Negeri 51 Setiris</div>
+    </div>
+
+    <div class="game-container">
+        <div class="background-glow"></div>
+        
+        <!-- Start Screen -->
+        <div class="main-area" id="startScreen">
+            <div class="start-screen">
+                <h1 class="logo">WHO WANTS TO BE A MILLIONAIRE</h1>
+                <p class="subtitle">Edisi Khusus: Surah Al-Ma'un</p>
+                <p style="font-size: 1.1rem; line-height: 1.6; margin: 30px 0; color: #b8b8d4;">
+                    Uji pengetahuan Anda tentang Surah Al-Ma'un dan menangkan hadiah hingga <strong style="color: #ffd700;">1 MILIAR RUPIAH!</strong>
+                </p>
+                <p style="color: #a0a0c0; margin-bottom: 20px;">
+                    15 pertanyaan • 3 bantuan • 1 kesempatan
+                </p>
+                <button class="start-btn" onclick="mulaiGame()">🎮 MULAI PERMAINAN</button>
+            </div>
+        </div>
+        
+        <!-- Game Screen -->
+        <div class="main-area hidden" id="gameScreen">
+            <div class="question-area">
+                <div class="question-box">
+                    <div class="question-number" id="questionNumber">Pertanyaan 1 dari 15</div>
+                    <div class="question-text" id="questionText"></div>
+                </div>
+                <div class="answers-grid" id="answersGrid"></div>
+            </div>
+        </div>
+        
+        <!-- Game Over Screen -->
+        <div class="main-area hidden" id="gameOverScreen">
+            <div class="game-over">
+                <h1 class="logo">PERMAINAN SELESAI</h1>
+                <div class="final-amount" id="finalAmount">Rp 0</div>
+                <p id="gameOverMessage" style="font-size: 1.2rem; margin: 20px 0; color: #b8b8d4;"></p>
+                <button class="start-btn" onclick="restartGame()">🔄 MAIN LAGI</button>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="sidebar hidden" id="sidebar">
+            <div class="money-ladder">
+                <h3>💰 TANGGA UANG</h3>
+                <div id="moneyLadder"></div>
+            </div>
+            
+            <div class="lifelines">
+                <h3>🆘 BANTUAN</h3>
+                <button class="lifeline-btn" onclick="useFiftyFifty()" id="fiftyFiftyBtn">
+                    ➗ 50:50
+                </button>
+                <button class="lifeline-btn" onclick="phoneAFriend()" id="phoneBtn">
+                    📞 Telepon Teman
+                </button>
+                <button class="lifeline-btn" onclick="askAudience()" id="audienceBtn">
+                    👥 Tanya Penonton
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        let currentQuestion = 0;
+        let currentMoney = 0;
+        let gameActive = false;
+        let musicEnabled = true;
+        let sfxEnabled = true;
+        
+        // Money ladder (in Rupiah)
+        const moneyLadder = [
+            1000000, 2000000, 3000000, 5000000, 10000000,
+            15000000, 25000000, 50000000, 75000000, 150000000,
+            300000000, 500000000, 750000000, 1000000000
+        ];
+        
+        // Safe points
+        const safePoints = [4, 9];
+        
+        // Questions about Surah Al-Ma'un
+        const questions = [
+            {
+                question: "Surah Al-Ma'un terdiri dari berapa ayat?",
+                answers: ["5 ayat", "6 ayat", "7 ayat", "8 ayat"],
+                correct: 2
+            },
+            {
+                question: "Apa arti dari kata 'Al-Ma'un'?",
+                answers: ["Anak yatim", "Barang-barang yang berguna", "Orang miskin", "Shalat"],
+                correct: 1
+            },
+            {
+                question: "Di kota mana Surah Al-Ma'un diturunkan?",
+                answers: ["Madinah", "Makkah", "Thaif", "Yaman"],
+                correct: 1
+            },
+            {
+                question: "Menurut ayat pertama, siapa yang mendustakan agama?",
+                answers: ["Yang rajin shalat", "Yang menghardik anak yatim", "Yang suka bersedekah", "Yang membaca Al-Quran"],
+                correct: 1
+            },
+            {
+                question: "Apa arti dari kata 'يَدُعُّ' dalam Surah Al-Ma'un?",
+                answers: ["Menyayangi", "Menghardik", "Menolong", "Mengasihi"],
+                correct: 1
+            },
+            {
+                question: "Ayat ketiga menyebutkan tentang tidak menganjurkan memberi makan siapa?",
+                answers: ["Anak yatim", "Orang miskin", "Tetangga", "Keluarga"],
+                correct: 1
+            },
+            {
+                question: "Kata 'وَيْلٌ' dalam ayat keempat artinya?",
+                answers: ["Kebahagiaan", "Kecelakaan", "Keberuntungan", "Kesuksesan"],
+                correct: 1
+            },
+            {
+                question: "Siapa yang dimaksud 'الَّذِينَ هُمْ عَن صَلَاتِهِمْ سَاهُونَ'?",
+                answers: ["Yang khusyuk shalat", "Yang lalai dari shalat", "Yang rajin shalat", "Yang cepat shalat"],
+                correct: 1
+            },
+            {
+                question: "Apa arti dari kata 'يُرَاءُونَ' dalam ayat keenam?",
+                answers: ["Berbuat ikhlas", "Berbuat riya", "Berbuat baik", "Berbuat adil"],
+                correct: 1
+            },
+            {
+                question: "Ayat terakhir menyebutkan tentang enggan memberikan apa?",
+                answers: ["Uang", "Makanan", "Barang berguna", "Pakaian"],
+                correct: 2
+            },
+            {
+                question: "Surah Al-Ma'un mengajarkan keseimbangan antara apa?",
+                answers: ["Dunia dan akhirat", "Hak Allah dan hak manusia", "Kaya dan miskin", "Tua dan muda"],
+                correct: 1
+            },
+            {
+                question: "Contoh 'al-ma'un' dalam kehidupan sehari-hari adalah?",
+                answers: ["Emas dan perak", "Panci, ember, dan alat rumah tangga", "Mobil dan motor", "Buku dan pulpen"],
+                correct: 1
+            },
+            {
+                question: "Hikmah utama dari Surah Al-Ma'un adalah?",
+                answers: ["Pentingnya kekayaan", "Keseimbangan ibadah dan sosial", "Keutamaan shalat saja", "Pentingnya berdagang"],
+                correct: 1
+            },
+            {
+                question: "Mengapa Allah mencela orang yang lalai dalam shalat?",
+                answers: ["Karena tidak hafal bacaan", "Karena tidak khusyuk dan tidak peduli", "Karena terlalu cepat", "Karena tidak wudhu"],
+                correct: 1
+            },
+            {
+                question: "Pesan moral terpenting dari Surah Al-Ma'un adalah?",
+                answers: ["Hanya fokus ibadah ritual", "Hanya fokus kegiatan sosial", "Mengintegrasikan ibadah dan kepedulian sosial", "Mengutamakan kekayaan"],
+                correct: 2
+            }
+        ];
+        
+        // MAIN START FUNCTION - SIMPLE AND DIRECT
+        function mulaiGame() {
+            alert('Memulai permainan...');
+            
+            // Hide start screen
+            document.getElementById('startScreen').className = 'main-area hidden';
+            
+            // Show game screen
+            document.getElementById('gameScreen').className = 'main-area';
+            
+            // Show sidebar
+            document.getElementById('sidebar').className = 'sidebar';
+            
+            // Reset game
+            currentQuestion = 0;
+            currentMoney = 0;
+            gameActive = true;
+            
+            // Setup game
+            setupMoneyLadder();
+            showQuestion();
+            
+            // Start thinking music
+            playMusic('thinking');
+        }
+        
+        function setupMoneyLadder() {
+            const ladder = document.getElementById('moneyLadder');
+            ladder.innerHTML = '';
+            
+            for (let i = moneyLadder.length - 1; i >= 0; i--) {
+                const item = document.createElement('div');
+                item.className = 'money-item';
+                item.innerHTML = `
+                    <span>${i + 1}</span>
+                    <span>Rp ${moneyLadder[i].toLocaleString('id-ID')}</span>
+                `;
+                
+                if (safePoints.includes(i)) {
+                    item.classList.add('safe');
+                }
+                
+                ladder.appendChild(item);
+            }
+        }
+        
+        function updateMoneyLadder() {
+            const items = document.querySelectorAll('.money-item');
+            items.forEach((item, index) => {
+                item.classList.remove('current');
+                const questionIndex = moneyLadder.length - 1 - index;
+                if (questionIndex === currentQuestion) {
+                    item.classList.add('current');
+                }
+            });
+        }
+        
+        function showQuestion() {
+            if (currentQuestion >= questions.length) {
+                endGame(true);
+                return;
+            }
+            
+            const q = questions[currentQuestion];
+            document.getElementById('questionNumber').textContent = `Pertanyaan ${currentQuestion + 1} dari ${questions.length}`;
+            document.getElementById('questionText').textContent = q.question;
+            
+            const answersGrid = document.getElementById('answersGrid');
+            answersGrid.innerHTML = '';
+            
+            const labels = ['A', 'B', 'C', 'D'];
+            q.answers.forEach((answer, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'answer-btn';
+                btn.innerHTML = `<strong>${labels[index]}:</strong> ${answer}`;
+                btn.onclick = () => selectAnswer(index);
+                answersGrid.appendChild(btn);
+            });
+            
+            updateMoneyLadder();
+        }
+        
+        function selectAnswer(selectedIndex) {
+            if (!gameActive) return;
+            
+            gameActive = false;
+            const q = questions[currentQuestion];
+            const buttons = document.querySelectorAll('.answer-btn');
+            
+            // Play final answer dramatic build-up
+            playMusic('final', false);
+            
+            setTimeout(() => {
+                if (selectedIndex === q.correct) {
+                    buttons[selectedIndex].classList.add('correct');
+                    playSound('correct');
+                    currentMoney = moneyLadder[currentQuestion];
+                    
+                    setTimeout(() => {
+                        currentQuestion++;
+                        if (currentQuestion >= questions.length) {
+                            endGame(true);
+                        } else {
+                            gameActive = true;
+                            showQuestion();
+                            
+                            // Play appropriate music based on question level
+                            if (currentQuestion >= 10) {
+                                playMusic('suspense');
+                            } else {
+                                playMusic('thinking');
+                            }
+                        }
+                    }, 2000);
+                } else {
+                    buttons[selectedIndex].classList.add('incorrect');
+                    buttons[q.correct].classList.add('correct');
+                    playSound('wrong');
+                    
+                    let finalMoney = 0;
+                    for (let i = safePoints.length - 1; i >= 0; i--) {
+                        if (currentQuestion > safePoints[i]) {
+                            finalMoney = moneyLadder[safePoints[i]];
+                            break;
+                        }
+                    }
+                    
+                    setTimeout(() => {
+                        endGame(false, finalMoney);
+                    }, 3000);
+                }
+            }, 2000);
+        }
+        
+        function endGame(won, finalMoney = null) {
+            document.getElementById('gameScreen').className = 'main-area hidden';
+            document.getElementById('sidebar').className = 'sidebar hidden';
+            document.getElementById('gameOverScreen').className = 'main-area';
+            
+            const finalAmount = document.getElementById('finalAmount');
+            const message = document.getElementById('gameOverMessage');
+            
+            if (won) {
+                finalAmount.textContent = `Rp ${moneyLadder[moneyLadder.length - 1].toLocaleString('id-ID')}`;
+                message.innerHTML = `🎉 <strong>SELAMAT!</strong> 🎉<br>Anda berhasil menjawab semua pertanyaan dengan benar!<br>Pengetahuan Anda tentang Surah Al-Ma'un sangat luar biasa!`;
+                
+                // Play millionaire victory music
+                playMusic('million', false);
+            } else {
+                const money = finalMoney || currentMoney;
+                finalAmount.textContent = `Rp ${money.toLocaleString('id-ID')}`;
+                if (money > 0) {
+                    message.innerHTML = `💪 <strong>Permainan Berakhir!</strong><br>Anda membawa pulang uang sebesar di atas.<br>Terus belajar tentang Surah Al-Ma'un!`;
+                } else {
+                    message.innerHTML = `📚 <strong>Jangan Menyerah!</strong><br>Pelajari lebih dalam tentang Surah Al-Ma'un<br>dan coba lagi untuk hasil yang lebih baik!`;
+                }
+                
+                // Stop all music for game over
+                stopCurrentMusic();
+            }
+        }
+        
+        function restartGame() {
+            document.getElementById('gameOverScreen').className = 'main-area hidden';
+            document.getElementById('startScreen').className = 'main-area';
+            
+            // Reset lifelines
+            document.querySelectorAll('.lifeline-btn').forEach(btn => {
+                btn.classList.remove('used');
+                btn.disabled = false;
+            });
+            
+            // Play intro music
+            playMusic('intro');
+        }
+        
+        // Lifeline functions
+        function useFiftyFifty() {
+            const btn = document.getElementById('fiftyFiftyBtn');
+            if (btn.classList.contains('used') || !gameActive) return;
+            
+            btn.classList.add('used');
+            btn.disabled = true;
+            
+            const q = questions[currentQuestion];
+            const buttons = document.querySelectorAll('.answer-btn');
+            const incorrectIndices = [];
+            
+            for (let i = 0; i < q.answers.length; i++) {
+                if (i !== q.correct) {
+                    incorrectIndices.push(i);
+                }
+            }
+            
+            const toRemove = incorrectIndices.slice(0, 2);
+            toRemove.forEach(index => {
+                buttons[index].style.opacity = '0.3';
+                buttons[index].style.pointerEvents = 'none';
+            });
+        }
+        
+        function phoneAFriend() {
+            const btn = document.getElementById('phoneBtn');
+            if (btn.classList.contains('used') || !gameActive) return;
+            
+            btn.classList.add('used');
+            btn.disabled = true;
+            
+            const q = questions[currentQuestion];
+            const labels = ['A', 'B', 'C', 'D'];
+            const correctLabel = labels[q.correct];
+            
+            const confidence = Math.random() > 0.2 ? 'cukup yakin' : 'tidak terlalu yakin';
+            const friendAdvice = `Teman: "Hmm, saya ${confidence} jawabannya adalah ${correctLabel}. Surah Al-Ma'un memang tentang kepedulian sosial dan ibadah yang benar."`;
+            
+            alert(`📞 Telepon Teman\n\n${friendAdvice}`);
+        }
+        
+        function askAudience() {
+            const btn = document.getElementById('audienceBtn');
+            if (btn.classList.contains('used') || !gameActive) return;
+            
+            btn.classList.add('used');
+            btn.disabled = true;
+            
+            const q = questions[currentQuestion];
+            const percentages = [0, 0, 0, 0];
+            
+            percentages[q.correct] = 60 + Math.random() * 25;
+            let remaining = 100 - percentages[q.correct];
+            
+            for (let i = 0; i < 4; i++) {
+                if (i !== q.correct) {
+                    percentages[i] = Math.random() * remaining / 3;
+                    remaining -= percentages[i];
+                }
+            }
+            
+            const labels = ['A', 'B', 'C', 'D'];
+            let audienceResult = '👥 Hasil Polling Penonton:\n\n';
+            percentages.forEach((percent, index) => {
+                audienceResult += `${labels[index]}: ${Math.round(percent)}%\n`;
+            });
+            
+            alert(audienceResult);
+        }
+        
+        // Audio Context for authentic WWTBAM music
+        let audioContext;
+        let currentAudioSource;
+        let musicGainNode;
+        let sfxGainNode;
+        
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                musicGainNode = audioContext.createGain();
+                sfxGainNode = audioContext.createGain();
+                musicGainNode.connect(audioContext.destination);
+                sfxGainNode.connect(audioContext.destination);
+                musicGainNode.gain.value = 0.3;
+                sfxGainNode.gain.value = 0.5;
+            }
+            return audioContext;
+        }
+        
+        // Create authentic WWTBAM audio buffers
+        function createWWTBAMBuffer(type, duration = 2) {
+            const ctx = initAudio();
+            const sampleRate = ctx.sampleRate;
+            const numSamples = sampleRate * duration;
+            const buffer = ctx.createBuffer(2, numSamples, sampleRate);
+            const leftChannel = buffer.getChannelData(0);
+            const rightChannel = buffer.getChannelData(1);
+            
+            for (let i = 0; i < numSamples; i++) {
+                const t = i / sampleRate;
+                let leftSample = 0;
+                let rightSample = 0;
+                
+                switch(type) {
+                    case 'intro':
+                        // Iconic WWTBAM opening theme
+                        const mainMelody = Math.sin(2 * Math.PI * 261.63 * t) * 0.3 + // C4
+                                          Math.sin(2 * Math.PI * 329.63 * t) * 0.25 + // E4
+                                          Math.sin(2 * Math.PI * 392.00 * t) * 0.2;   // G4
+                        
+                        const orchestralBacking = Math.sin(2 * Math.PI * 523.25 * t) * 0.15 + // C5
+                                                 Math.sin(2 * Math.PI * 196.00 * t) * 0.18;   // G3
+                        
+                        const rhythmicPulse = Math.sin(2 * Math.PI * 2 * t) * 0.1;
+                        const sparkle = Math.sin(2 * Math.PI * 1046.50 * t) * Math.sin(t * 4) * 0.08;
+                        
+                        const envelope = Math.sin(Math.PI * t / duration) * 0.9;
+                        leftSample = (mainMelody + orchestralBacking + rhythmicPulse + sparkle) * envelope;
+                        rightSample = leftSample * 0.95 + Math.sin(2 * Math.PI * 440 * t) * 0.05;
+                        break;
+                        
+                    case 'thinking':
+                        // Classic tension music with heartbeat
+                        const heartbeat = Math.sin(2 * Math.PI * 1.5 * t) * 0.12;
+                        
+                        const pad1 = Math.sin(2 * Math.PI * (110 + Math.sin(t * 0.3) * 3) * t) * 0.15;
+                        const pad2 = Math.sin(2 * Math.PI * (165 + Math.sin(t * 0.2) * 4) * t) * 0.12;
+                        const pad3 = Math.sin(2 * Math.PI * (220 + Math.sin(t * 0.4) * 2) * t) * 0.1;
+                        
+                        const clockTick = Math.sin(2 * Math.PI * 880 * t) * Math.sin(t * 2.5) * 0.06;
+                        const atmosphere = Math.sin(2 * Math.PI * (55 + Math.sin(t * 0.1) * 6) * t) * 0.08;
+                        
+                        // Subtle string tremolo
+                        const strings = Math.sin(2 * Math.PI * 330 * t) * Math.sin(t * 8) * 0.04;
+                        
+                        leftSample = (heartbeat + pad1 + pad2 + clockTick + atmosphere + strings) * 0.6;
+                        rightSample = (heartbeat + pad2 + pad3 + clockTick + atmosphere) * 0.6;
+                        break;
+                        
+                    case 'correct':
+                        // Triumphant correct answer chimes
+                        const ding1 = Math.sin(2 * Math.PI * 523.25 * t) * Math.exp(-t * 2) * 0.4;
+                        const ding2 = Math.sin(2 * Math.PI * 659.25 * t) * Math.exp(-t * 2.2) * 0.35;
+                        const ding3 = Math.sin(2 * Math.PI * 783.99 * t) * Math.exp(-t * 2.5) * 0.3;
+                        const ding4 = Math.sin(2 * Math.PI * 1046.50 * t) * Math.exp(-t * 3) * 0.25;
+                        
+                        const warmBass = Math.sin(2 * Math.PI * 130.81 * t) * Math.exp(-t * 1.5) * 0.2;
+                        const orchestralSwell = Math.sin(2 * Math.PI * 261.63 * t) * Math.exp(-t * 1.8) * 0.15;
+                        
+                        leftSample = (ding1 + ding3 + warmBass + orchestralSwell) * 0.7;
+                        rightSample = (ding2 + ding4 + warmBass + orchestralSwell) * 0.7;
+                        break;
+                        
+                    case 'wrong':
+                        // Dramatic wrong answer sound
+                        const wrong1 = Math.sin(2 * Math.PI * (293.66 - t * 50) * t) * Math.exp(-t * 1.5) * 0.3;
+                        const wrong2 = Math.sin(2 * Math.PI * (220.00 - t * 40) * t) * Math.exp(-t * 1.8) * 0.25;
+                        const wrong3 = Math.sin(2 * Math.PI * (146.83 - t * 30) * t) * Math.exp(-t * 2) * 0.2;
+                        
+                        const bassDrop = Math.sin(2 * Math.PI * (73.42 - t * 15) * t) * Math.exp(-t * 1.2) * 0.25;
+                        const orchestralStab = Math.sin(2 * Math.PI * (110 - t * 20) * t) * Math.exp(-t * 1.6) * 0.15;
+                        
+                        leftSample = (wrong1 + wrong3 + bassDrop + orchestralStab) * 0.6;
+                        rightSample = (wrong2 + wrong3 + bassDrop + orchestralStab) * 0.6;
+                        break;
+                        
+                    case 'final':
+                        // "Final Answer" dramatic build-up
+                        const intensity = Math.min(t * 1.5, 1);
+                        
+                        const build1 = Math.sin(2 * Math.PI * (130.81 + t * 25) * t) * intensity * 0.25;
+                        const build2 = Math.sin(2 * Math.PI * (196.00 + t * 20) * t) * intensity * 0.22;
+                        const build3 = Math.sin(2 * Math.PI * (261.63 + t * 15) * t) * intensity * 0.18;
+                        
+                        const timpani = Math.sin(2 * Math.PI * (65.41 + t * 10) * t) * intensity * 0.2;
+                        const strings1 = Math.sin(2 * Math.PI * (329.63 + t * 12) * t) * intensity * 0.15;
+                        const strings2 = Math.sin(2 * Math.PI * (392.00 + t * 10) * t) * intensity * 0.12;
+                        
+                        const cymbalRoll = Math.sin(2 * Math.PI * 1500 * t) * Math.sin(t * 15) * intensity * 0.06;
+                        
+                        leftSample = (build1 + build3 + timpani + strings1 + cymbalRoll) * 0.6;
+                        rightSample = (build2 + build3 + timpani + strings2 + cymbalRoll) * 0.6;
+                        break;
+                        
+                    case 'million':
+                        // Million dollar winner celebration
+                        const fanfare1 = Math.sin(2 * Math.PI * 523.25 * t) * Math.sin(Math.PI * t / duration) * 0.35;
+                        const fanfare2 = Math.sin(2 * Math.PI * 659.25 * t) * Math.sin(Math.PI * t / duration) * 0.32;
+                        const fanfare3 = Math.sin(2 * Math.PI * 783.99 * t) * Math.sin(Math.PI * t / duration) * 0.28;
+                        const fanfare4 = Math.sin(2 * Math.PI * 1046.50 * t) * Math.sin(Math.PI * t / duration) * 0.25;
+                        
+                        const brass1 = Math.sin(2 * Math.PI * 261.63 * t) * Math.sin(Math.PI * t / duration) * 0.22;
+                        const brass2 = Math.sin(2 * Math.PI * 196.00 * t) * Math.sin(Math.PI * t / duration) * 0.2;
+                        
+                        const orchestralStrings = Math.sin(2 * Math.PI * 392.00 * t) * Math.sin(Math.PI * t / duration) * 0.18;
+                        const victorySparkles = Math.sin(2 * Math.PI * 1568.00 * t) * Math.sin(t * 10) * 0.1;
+                        const timpaniVictory = Math.sin(2 * Math.PI * 130.81 * t) * Math.sin(Math.PI * t / duration) * 0.15;
+                        
+                        leftSample = (fanfare1 + fanfare3 + brass1 + orchestralStrings + victorySparkles + timpaniVictory) * 0.5;
+                        rightSample = (fanfare2 + fanfare4 + brass2 + orchestralStrings + victorySparkles + timpaniVictory) * 0.5;
+                        break;
+                        
+                    case 'suspense':
+                        // High-stakes suspense for higher questions
+                        const suspenseBass = Math.sin(2 * Math.PI * (55 + Math.sin(t * 0.2) * 5) * t) * 0.15;
+                        const suspenseStrings = Math.sin(2 * Math.PI * (220 + Math.sin(t * 0.3) * 8) * t) * 0.12;
+                        const suspensePad = Math.sin(2 * Math.PI * (330 + Math.sin(t * 0.1) * 10) * t) * 0.1;
+                        
+                        const tensionPulse = Math.sin(2 * Math.PI * 1.8 * t) * 0.08;
+                        const highTension = Math.sin(2 * Math.PI * 880 * t) * Math.sin(t * 3) * 0.05;
+                        
+                        leftSample = (suspenseBass + suspenseStrings + tensionPulse + highTension) * 0.7;
+                        rightSample = (suspenseBass + suspensePad + tensionPulse + highTension) * 0.7;
+                        break;
+                }
+                
+                // Apply gentle filtering for smooth sound
+                if (i > 0) {
+                    leftSample = leftSample * 0.9 + leftChannel[i-1] * 0.1;
+                    rightSample = rightSample * 0.9 + rightChannel[i-1] * 0.1;
+                }
+                
+                leftChannel[i] = Math.max(-0.9, Math.min(0.9, leftSample));
+                rightChannel[i] = Math.max(-0.9, Math.min(0.9, rightSample));
+            }
+            
+            return buffer;
+        }
+        
+        function playMusic(type, loop = true) {
+            if (!musicEnabled) return;
+            
+            try {
+                const ctx = initAudio();
+                if (ctx.state === 'suspended') {
+                    ctx.resume();
+                }
+                
+                stopCurrentMusic();
+                
+                let duration = 3;
+                if (type === 'intro') duration = 4;
+                if (type === 'final') duration = 3;
+                if (type === 'million') duration = 5;
+                
+                const buffer = createWWTBAMBuffer(type, duration);
+                const source = ctx.createBufferSource();
+                source.buffer = buffer;
+                source.loop = loop;
+                source.connect(musicGainNode);
+                source.start();
+                
+                currentAudioSource = source;
+            } catch (e) {
+                console.log('Music play failed:', e);
+            }
+        }
+        
+        function playSound(type) {
+            if (!sfxEnabled) return;
+            
+            try {
+                const ctx = initAudio();
+                if (ctx.state === 'suspended') {
+                    ctx.resume();
+                }
+                
+                let duration = 1;
+                if (type === 'correct') duration = 1.5;
+                if (type === 'wrong') duration = 2;
+                
+                const buffer = createWWTBAMBuffer(type, duration);
+                const source = ctx.createBufferSource();
+                source.buffer = buffer;
+                source.connect(sfxGainNode);
+                source.start();
+            } catch (e) {
+                console.log('Sound play failed:', e);
+            }
+        }
+        
+        function stopCurrentMusic() {
+            if (currentAudioSource) {
+                try {
+                    currentAudioSource.stop();
+                } catch (e) {
+                    // Source might already be stopped
+                }
+                currentAudioSource = null;
+            }
+        }
+        
+        function toggleMusic() {
+            musicEnabled = !musicEnabled;
+            const btn = document.getElementById('musicBtn');
+            btn.textContent = musicEnabled ? '🎵' : '🔇';
+            
+            if (!musicEnabled) {
+                stopCurrentMusic();
+            } else if (gameActive) {
+                // Resume appropriate music based on game state
+                if (currentQuestion >= 10) {
+                    playMusic('suspense');
+                } else {
+                    playMusic('thinking');
+                }
+            } else {
+                playMusic('intro');
+            }
+        }
+        
+        function toggleSFX() {
+            sfxEnabled = !sfxEnabled;
+            const btn = document.getElementById('sfxBtn');
+            btn.textContent = sfxEnabled ? '🔊' : '🔇';
+        }
+        
+        // Auto-play intro music when page loads
+        window.addEventListener('load', function() {
+            // Small delay to ensure everything is loaded
+            setTimeout(() => {
+                playMusic('intro');
+            }, 500);
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'966b584145276cfd',t:'MTc1Mzc3ODc3NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
